@@ -2,23 +2,36 @@ provider "aws" {
   region = "us-east-2"
 }
 
-resource "aws_instance" "server" {
-  ami                    = "ami-0c55b159cbfafe1f0"
-  instance_type          = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.sg.id]
-  user_data              = <<-EOF
+resource "aws_launch_configuration" "servers" {
+  image_id        = "ami-0c55b159cbfafe1f0"
+  instance_type   = "t2.micro"
+  security_groups = [aws_security_group.sg.id]
+  user_data       = <<-EOF
   #!/bin/bash
   echo "Hello, World" > index.html
   nohup busybox httpd -f -p "${var.server_port}" &
   EOF
 
-  tags = {
-    Name = "web-server"
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
+resource "aws_autoscaling_group" "asg-servers" {
+  launch_configuration = aws_launch_configuration.servers.name
+  vpc_zone_identifier  = data.aws_subnet_ids.default.ids
+
+  min_size = 2
+  max_size = 10
+
+  tag {
+    key                 = "Name"
+    value               = "asg-servers"
+    propagate_at_launch = true
+  }
+}
 resource "aws_security_group" "sg" {
-  name = "secgroup-web-server"
+  name = "secgroup-servers"
 
   ingress {
     from_port   = var.server_port
@@ -34,8 +47,10 @@ variable "server_port" {
   default     = 8080
 }
 
-output "public_ip" {
-  description = "The public IP address of the web server"
-  value       = aws_instance.server.public_ip
+data "aws_vpc" "default" {
+  default = true
+}
 
+data "aws_subnet_ids" "default" {
+  vpc_id = data.aws_vpc.default.id
 }
