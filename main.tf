@@ -1,3 +1,15 @@
+terraform {
+  backend "s3" {
+    bucket = "terraform-mastery-remote-backend"
+    key    = "global/s3/terraform.tfstate"
+    region = "us-east-2"
+
+    dynamodb_table = "terraform-mastery-locks"
+    encrypt        = true
+  }
+}
+
+
 provider "aws" {
   region = "us-east-2"
 }
@@ -24,8 +36,8 @@ resource "aws_autoscaling_group" "asg-servers" {
   target_group_arns = [aws_lb_target_group.tg-servers.arn]
   health_check_type = "ELB"
 
-  min_size = 2
-  max_size = 10
+  min_size = 3
+  max_size = 5
 
   tag {
     key                 = "Name"
@@ -140,3 +152,6 @@ output "alb_dns_name" {
   value       = aws_lb.alb-servers.dns_name
   description = "The domain name of the load balancer"
 }
+
+
+
