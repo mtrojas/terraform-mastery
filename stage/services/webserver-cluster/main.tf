@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    key = "global/s3/terraform.tfstate"
+    key = "stage/services/webserver-cluster/terraform.tfstate"
   }
 }
 
@@ -129,23 +129,12 @@ resource "aws_security_group" "sg" {
   }
 }
 
-variable "server_port" {
-  description = "The port the server will use for HTTP requests"
-  type        = number
-  default     = 8080
-}
-
 data "aws_vpc" "default" {
   default = true
 }
 
 data "aws_subnet_ids" "default" {
   vpc_id = data.aws_vpc.default.id
-}
-
-output "alb_dns_name" {
-  value       = aws_lb.alb-servers.dns_name
-  description = "The domain name of the load balancer"
 }
 
 
