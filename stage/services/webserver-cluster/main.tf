@@ -4,18 +4,18 @@ terraform {
   }
 }
 
-
 provider "aws" {
   region = "us-east-2"
 }
-
 resource "aws_launch_configuration" "servers" {
   image_id        = "ami-0c55b159cbfafe1f0"
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.sg.id]
   user_data       = <<-EOF
   #!/bin/bash
-  echo "Hello, World" > index.html
+  echo "Hello, World" >> index.html
+  echo "${data.terraform_remote_state.db.outputs.address}" >> index.html
+  echo "${data.terraform_remote_state.db.outputs.port}" >> index.html
   nohup busybox httpd -f -p "${var.server_port}" &
   EOF
 
@@ -47,7 +47,6 @@ resource "aws_lb" "alb-servers" {
   subnets            = data.aws_subnet_ids.default.ids
   security_groups    = [aws_security_group.sg-alb.id]
 }
-
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.alb-servers.arn
   port              = 80
@@ -81,7 +80,6 @@ resource "aws_lb_listener_rule" "alb-listener-rule" {
   }
 
 }
-
 resource "aws_lb_target_group" "tg-servers" {
   name     = "tg-servers"
   port     = var.server_port
@@ -98,7 +96,6 @@ resource "aws_lb_target_group" "tg-servers" {
     unhealthy_threshold = 2
   }
 }
-
 resource "aws_security_group" "sg-alb" {
   name = "secgroup-alb"
 
@@ -135,6 +132,16 @@ data "aws_vpc" "default" {
 
 data "aws_subnet_ids" "default" {
   vpc_id = data.aws_vpc.default.id
+}
+
+data "terraform_remote_state" "db" {
+  backend = "s3"
+
+  config = {
+    bucket = "terraform-mastery-remote-backend"
+    key    = "stage/data-stores/mysql/terraform.tfstate"
+    region = "us-east-2"
+  }
 }
 
 
