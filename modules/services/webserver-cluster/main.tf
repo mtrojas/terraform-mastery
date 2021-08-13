@@ -1,11 +1,7 @@
 terraform {
   backend "s3" {
-    key = "stage/services/webserver-cluster/terraform.tfstate"
+    key = "modules/services/webserver-cluster/terraform.tfstate"
   }
-}
-
-provider "aws" {
-  region = "us-east-2"
 }
 resource "aws_launch_configuration" "servers" {
   image_id        = "ami-0c55b159cbfafe1f0"
