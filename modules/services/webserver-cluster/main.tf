@@ -21,13 +21,13 @@ resource "aws_autoscaling_group" "asg-servers" {
 
   tag {
     key                 = "Name"
-    value               = "asg-servers"
+    value               = "${var.cluster_name}-asg-servers"
     propagate_at_launch = true
   }
 }
 
 resource "aws_lb" "alb-servers" {
-  name               = "alb-servers"
+  name               = "${var.cluster_name}-alb-servers"
   load_balancer_type = "application"
   subnets            = data.aws_subnet_ids.default.ids
   security_groups    = [aws_security_group.sg-alb.id]
@@ -63,10 +63,9 @@ resource "aws_lb_listener_rule" "alb-listener-rule" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.tg-servers.arn
   }
-
 }
 resource "aws_lb_target_group" "tg-servers" {
-  name     = "tg-servers"
+  name     = "${var.cluster_name}-tg-servers"
   port     = var.server_port
   protocol = "HTTP"
   vpc_id   = data.aws_vpc.default.id
@@ -82,7 +81,7 @@ resource "aws_lb_target_group" "tg-servers" {
   }
 }
 resource "aws_security_group" "sg-alb" {
-  name = "secgroup-alb"
+  name = "${var.cluster_name}-alb"
 
   # Allow inbound HTTP requests
   ingress {
@@ -101,7 +100,7 @@ resource "aws_security_group" "sg-alb" {
   }
 }
 resource "aws_security_group" "sg" {
-  name = "secgroup-servers"
+  name = "${var.cluster_name}-servers"
 
   ingress {
     from_port   = var.server_port
@@ -131,8 +130,8 @@ data "terraform_remote_state" "db" {
   backend = "s3"
 
   config = {
-    bucket = "terraform-mastery-remote-backend"
-    key    = "stage/data-stores/mysql/terraform.tfstate"
+    bucket = var.db_remote_state_bucket
+    key    = var.db_remote_state_key
     region = "us-east-2"
   }
 }
