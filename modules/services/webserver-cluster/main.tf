@@ -1,8 +1,3 @@
-terraform {
-  backend "s3" {
-    key = "modules/services/webserver-cluster/terraform.tfstate"
-  }
-}
 resource "aws_launch_configuration" "servers" {
   image_id        = "ami-0c55b159cbfafe1f0"
   instance_type   = "t2.micro"
