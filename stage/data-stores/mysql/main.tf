@@ -12,7 +12,7 @@ provider "aws" {
 variable "db_password" {}
 
 module "mysql" {
-  source = "../../../modules/data-stores/mysql"
+  source = "github.com/mtrojas/terraform-mastery-modules//data-stores/mysql?ref=v0.0.1"
 
   cluster_name = "stage"
   db_password  = var.db_password
