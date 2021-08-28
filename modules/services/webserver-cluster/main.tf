@@ -124,7 +124,7 @@ resource "aws_security_group" "sg" {
 }
 
 data "template_file" "user_data" {
-  template = file("../../../modules/services/webserver-cluster/user-data.sh")
+  template = file("${path.module}/user-data.sh")
 
   vars = {
     server_port = var.server_port
