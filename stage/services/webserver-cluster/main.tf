@@ -20,9 +20,3 @@ module "webserver_cluster" {
   min_size      = 2
   max_size      = 2
 }
-
-# Accessing Child Module Outputs
-output "alb_dns_name" {
-  value       = module.webserver_cluster.alb_dns_name
-  description = "The domain name of the load balancer"
-}
