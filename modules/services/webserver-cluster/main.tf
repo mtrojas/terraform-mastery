@@ -41,6 +41,7 @@ resource "aws_lb" "alb-servers" {
   subnets            = data.aws_subnet_ids.default.ids
   security_groups    = [aws_security_group.sg-alb.id]
 }
+
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.alb-servers.arn
   port              = local.http_port
@@ -73,6 +74,7 @@ resource "aws_lb_listener_rule" "alb-listener-rule" {
     target_group_arn = aws_lb_target_group.tg-servers.arn
   }
 }
+
 resource "aws_lb_target_group" "tg-servers" {
   name     = "${var.cluster_name}-tg-servers"
   port     = var.server_port
@@ -89,6 +91,7 @@ resource "aws_lb_target_group" "tg-servers" {
     unhealthy_threshold = 2
   }
 }
+
 resource "aws_security_group" "sg-alb" {
   name = "${var.cluster_name}-alb"
 
@@ -108,6 +111,7 @@ resource "aws_security_group" "sg-alb" {
     cidr_blocks = local.all_ips
   }
 }
+
 resource "aws_security_group" "sg" {
   name = "${var.cluster_name}-servers"
 
@@ -118,6 +122,7 @@ resource "aws_security_group" "sg" {
     cidr_blocks = local.all_ips
   }
 }
+
 data "template_file" "user_data" {
   template = file("../../../modules/services/webserver-cluster/user-data.sh")
 
@@ -127,6 +132,7 @@ data "template_file" "user_data" {
     db_port     = data.terraform_remote_state.db.outputs.port
   }
 }
+
 data "aws_vpc" "default" {
   default = true
 }
