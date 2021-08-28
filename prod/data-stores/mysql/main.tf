@@ -25,5 +25,5 @@ output "address" {
 }
 
 output "port" {
-  value = module.mysql.address
+  value = module.mysql.port
 }
