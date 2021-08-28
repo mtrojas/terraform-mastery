@@ -12,6 +12,7 @@ module "webserver_cluster" {
   source = "../../../modules/services/webserver-cluster"
 
   cluster_name           = "webservers-stage"
+  ami                    = "ami-0c55b159cbfafe1f0"
   db_remote_state_bucket = "terraform-mastery-remote-backend"
   db_remote_state_key    = "stage/data-stores/mysql/terraform.tfstate"
 }

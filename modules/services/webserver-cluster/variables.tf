@@ -9,6 +9,11 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "ami" {
+  description = "The image to use for creating the instances"
+  type        = string
+}
+
 variable "db_remote_state_bucket" {
   description = "The name of the S3 bucket for the database's remote state"
   type        = string
