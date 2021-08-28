@@ -12,9 +12,13 @@ module "webserver_cluster" {
   source = "../../../modules/services/webserver-cluster"
 
   cluster_name           = "webservers-prod"
-  ami                    = "ami-0747bdcabd34c712a"
   db_remote_state_bucket = "terraform-mastery-remote-backend"
   db_remote_state_key    = "prod/data-stores/mysql/terraform.tfstate"
+
+  ami           = "ami-0747bdcabd34c712a"
+  instance_type = "m4.large"
+  min_size      = 2
+  max_size      = 10
 }
 
 # Accessing Child Module Outputs

@@ -1,6 +1,15 @@
+locals {
+  http_port     = 80
+  any_port      = 0
+  any_protocol  = "-1"
+  tcp_protocol  = "tcp"
+  http_protocol = "HTTP"
+  all_ips       = ["0.0.0.0/0"]
+}
+
 resource "aws_launch_configuration" "servers" {
   image_id        = var.ami
-  instance_type   = "t2.micro"
+  instance_type   = var.instance_type
   security_groups = [aws_security_group.sg.id]
   user_data       = data.template_file.user_data.rendered
 
@@ -16,8 +25,8 @@ resource "aws_autoscaling_group" "asg-servers" {
   target_group_arns = [aws_lb_target_group.tg-servers.arn]
   health_check_type = "ELB"
 
-  min_size = 3
-  max_size = 5
+  min_size = var.min_size
+  max_size = var.max_size
 
   tag {
     key                 = "Name"
@@ -34,8 +43,8 @@ resource "aws_lb" "alb-servers" {
 }
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.alb-servers.arn
-  port              = 80
-  protocol          = "HTTP"
+  port              = local.http_port
+  protocol          = local.http_protocol
 
   # By default, return a simple 404 page
   default_action {
@@ -67,12 +76,12 @@ resource "aws_lb_listener_rule" "alb-listener-rule" {
 resource "aws_lb_target_group" "tg-servers" {
   name     = "${var.cluster_name}-tg-servers"
   port     = var.server_port
-  protocol = "HTTP"
+  protocol = local.http_protocol
   vpc_id   = data.aws_vpc.default.id
 
   health_check {
     path                = "/"
-    protocol            = "HTTP"
+    protocol            = local.http_protocol
     matcher             = "200"
     interval            = 15
     timeout             = 3
@@ -85,18 +94,18 @@ resource "aws_security_group" "sg-alb" {
 
   # Allow inbound HTTP requests
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = local.http_port
+    to_port     = local.http_port
+    protocol    = local.tcp_protocol
+    cidr_blocks = local.all_ips
   }
 
   # Allow all outbound requests
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = local.any_port
+    to_port     = local.any_port
+    protocol    = local.any_protocol
+    cidr_blocks = local.all_ips
   }
 }
 resource "aws_security_group" "sg" {
@@ -105,8 +114,8 @@ resource "aws_security_group" "sg" {
   ingress {
     from_port   = var.server_port
     to_port     = var.server_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    protocol    = local.tcp_protocol
+    cidr_blocks = local.all_ips
   }
 }
 data "template_file" "user_data" {
