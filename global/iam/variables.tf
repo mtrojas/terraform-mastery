@@ -9,3 +9,16 @@ variable "family_names" {
   type        = list(string)
   default     = ["rene", "isabel", "sofia", "magdalena", "santiago"]
 }
+
+variable "family_beauty" {
+  description = "Some of the beauty my siblings have"
+  type        = map(string)
+  default = {
+    rene      = "generous"
+    isabel    = "friendly"
+    sofia     = "intuition"
+    magdalena = "honesty"
+    santiago  = "smart"
+  }
+
+}
