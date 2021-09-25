@@ -19,3 +19,7 @@ output "long_family_names" {
 output "bios" {
   value = [for name, beauty in var.family_beauty : "${name} is ${beauty}"]
 }
+
+output "new_map" {
+  value = { for name in var.family_names : name => length(name) }
+}
