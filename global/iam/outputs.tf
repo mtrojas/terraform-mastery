@@ -32,3 +32,12 @@ output "new_map" {
 output "map_map" {
   value = { for name, beauty in var.family_beauty : upper(name) => upper(beauty) }
 }
+
+# Use the for String directives
+output "string_directives" {
+  value = <<EOF
+%{~for name in var.family_names}
+  ${name}
+%{~endfor}
+EOF
+}
