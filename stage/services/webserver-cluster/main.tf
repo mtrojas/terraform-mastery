@@ -9,7 +9,7 @@ provider "aws" {
 }
 
 module "webserver_cluster" {
-  source = "github.com/mtrojas/terraform-mastery-modules//services/webserver-cluster?ref=v0.0.6"
+  source = "github.com/mtrojas/terraform-mastery-modules//services/webserver-cluster?ref=v0.0.7"
 
   cluster_name           = "webservers-stage"
   db_remote_state_bucket = "terraform-mastery-remote-backend"
