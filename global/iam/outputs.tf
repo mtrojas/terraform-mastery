@@ -41,3 +41,8 @@ output "string_directives" {
 %{~endfor}
 EOF
 }
+
+# Use the if String directive
+output "if_else_directive" {
+  value = "Hello, %{if var.name != ""}${var.name}%{else}(unnamed)%{endif}"
+}
