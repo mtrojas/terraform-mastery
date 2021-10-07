@@ -9,18 +9,19 @@ provider "aws" {
 }
 
 module "webserver_cluster" {
-  source = "github.com/mtrojas/terraform-mastery-modules//services/webserver-cluster?ref=v0.0.7"
+  source = "github.com/mtrojas/terraform-mastery-modules//services/webserver-cluster?ref=v0.0.8"
+
+  ami         = "ami-0c55b159cbfafe1f0"
+  server_text = "My new text to deploy v0.0.3"
 
   cluster_name           = "webservers-stage"
   db_remote_state_bucket = "terraform-mastery-remote-backend"
   db_remote_state_key    = "stage/data-stores/mysql/terraform.tfstate"
 
-  ami                  = "ami-0c55b159cbfafe1f0"
-  instance_type        = "t2.micro"
-  min_size             = 2
-  max_size             = 2
-  enable_autoscaling   = false
-  enable_new_user_data = true
+  instance_type      = "t2.micro"
+  min_size           = 2
+  max_size           = 2
+  enable_autoscaling = false
 
   custom_tags = {
     Owner       = "team-devops"
