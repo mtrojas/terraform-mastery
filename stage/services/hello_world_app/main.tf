@@ -1,6 +1,12 @@
 terraform {
+  required_providers {
+    # Allow any 3.x version of the AWS provider
+    aws = {
+      version = "~> 3.0"
+    }
+  }
   backend "s3" {
-    key = "stage/services/webserver-cluster/terraform.tfstate"
+    key = "stage/services/hello-world-app/terraform.tfstate"
   }
 }
 
@@ -8,13 +14,12 @@ provider "aws" {
   region = "us-east-2"
 }
 
-module "webserver_cluster" {
-  source = "github.com/mtrojas/terraform-mastery-modules//services/webserver-cluster?ref=v0.0.8"
+module "hello_world_app" {
+  source = "github.com/mtrojas/terraform-mastery-modules//services/hello-world-app?ref=v0.0.13"
 
-  ami         = "ami-0c55b159cbfafe1f0"
-  server_text = "My new text to deploy v0.0.3"
+  server_text = "My new text to deploy v0.0.4"
+  environment = "staging"
 
-  cluster_name           = "webservers-stage"
   db_remote_state_bucket = "terraform-mastery-remote-backend"
   db_remote_state_key    = "stage/data-stores/mysql/terraform.tfstate"
 
