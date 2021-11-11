@@ -1,6 +1,5 @@
 # Provisioners examples
 # The following code is not related to the overall project
-
 terraform {
   backend "s3" {
     key = "global/provisioners/terraform.tfstate"
@@ -27,7 +26,7 @@ resource "aws_security_group" "sg_remote-exec" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["91.250.240.244/32"]
+    cidr_blocks = ["91.250.240.248/32"]
   }
 }
 
@@ -58,4 +57,33 @@ resource "aws_instance" "test_remote-exec" {
     user        = "ubuntu"
     private_key = tls_private_key.pk_remote-exec.private_key_pem
   }
+}
+
+# Provisioners with null_resource
+resource "null_resource" "test" {
+  # Use UUID to force this null_resource to be recreated on every
+  # call to 'terraform apply'
+  triggers = {
+    uuid = uuid()
+  }
+  provisioner "local-exec" {
+    command = "echo \"Hello, World from $(uname -smp)\""
+  }
+}
+
+# External data source
+data "external" "echo" {
+  program = ["bash", "-c", "cat /dev/stdin"]
+
+  query = {
+    foo = "bar"
+  }
+}
+
+output "echo" {
+  value = data.external.echo.result
+}
+
+output "echo_foo" {
+  value = data.external.echo.result.foo
 }
