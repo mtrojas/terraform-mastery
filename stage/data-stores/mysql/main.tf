@@ -7,7 +7,6 @@ terraform {
   }
 
   backend "s3" {
-    key = "stage/data-stores/mysql/terraform.tfstate"
   }
 }
 
@@ -16,7 +15,7 @@ provider "aws" {
 }
 
 module "mysql" {
-  source = "github.com/mtrojas/terraform-mastery-modules//data-stores/mysql?ref=v0.0.12"
+  source = "github.com/mtrojas/terraform-mastery-modules//data-stores/mysql?ref=v0.0.15"
 
   db_name     = var.db_name
   db_username = var.db_username
