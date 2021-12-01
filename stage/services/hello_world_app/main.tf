@@ -15,13 +15,13 @@ provider "aws" {
 }
 
 module "hello_world_app" {
-  source = "github.com/mtrojas/terraform-mastery-modules//services/hello-world-app?ref=v0.0.13"
+  source = "github.com/mtrojas/terraform-mastery-modules//services/hello-world-app?ref=v0.0.15"
 
-  server_text = "My new text to deploy v0.0.4"
-  environment = "staging"
+  server_text = "My new text to deploy v0.0.5"
+  environment = var.environment
 
-  db_remote_state_bucket = "terraform-mastery-remote-backend"
-  db_remote_state_key    = "stage/data-stores/mysql/terraform.tfstate"
+  db_remote_state_bucket = var.db_remote_state_bucket
+  db_remote_state_key    = var.db_remote_state_key
 
   instance_type      = "t2.micro"
   min_size           = 2
