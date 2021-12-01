@@ -17,7 +17,7 @@ provider "aws" {
 module "hello_world_app" {
   source = "github.com/mtrojas/terraform-mastery-modules//services/hello-world-app?ref=v0.0.15"
 
-  server_text = "My new text to deploy v0.0.5"
+  server_text = var.server_text
   environment = var.environment
 
   db_remote_state_bucket = var.db_remote_state_bucket

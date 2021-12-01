@@ -13,3 +13,9 @@ variable "environment" {
   type        = string
   default     = "stage"
 }
+
+variable "server_text" {
+  description = "The text the web server should return"
+  default     = "Hello, World!"
+  type        = string
+}
