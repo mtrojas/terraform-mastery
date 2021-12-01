@@ -27,8 +27,9 @@ override.tf.json
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
 kubeconfig_*
-aws-iam-authenticator
 tfstate
 *.zip
-.terraform.lock.hcl
 dev.log
+
+# Terratest Directory
+.test-data/
