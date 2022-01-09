@@ -31,5 +31,13 @@ tfstate
 *.zip
 dev.log
 
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
 # Terratest Directory
 .test-data/
+
+### Terragrunt ###
+# terragrunt cache directories
+**/.terragrunt-cache/*
